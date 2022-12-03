@@ -1,0 +1,22 @@
+program a34553;
+var n, p, k : integer;
+
+procedure sum(pk, pn: integer, var rez : integer);
+var i: integer;
+begin
+write(pk);
+write(pk + pn)
+end;
+
+procedure num(m1, m2: integer, var res : integer);
+var q: integer;
+begin
+write(m1);
+write(m1 + m2)
+end;
+
+begin
+n := 3;
+sum(3 + 4 * 2, 5, n);
+write(n + 5)
+end.

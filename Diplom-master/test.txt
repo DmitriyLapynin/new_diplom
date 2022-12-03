@@ -1,0 +1,23 @@
+program a34553;
+var a, c:integer;
+b : array[1..5] of integer;
+begin
+    a:=10;
+    c := 4;
+    read(b[c]);
+    b[1] := 5;
+    b[c - 1] := b[1] + b[c];
+    write(b[c - 1]);
+    if b[c - 1] > b[4] then
+    begin
+        a := 15 + b[3];
+        b[3] := b[2 + 1] * b[4];
+    end
+    else
+    begin
+        a := 2;
+        a := 30;
+    end;
+    write(b[3]);
+    write(a)
+end.
