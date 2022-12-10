@@ -15,7 +15,7 @@ try:
             break
     print("Введите название файла с программой")
     f = input()'''
-    i = Interpretator('test3.txt', 1)
+    i = Interpretator('test3.txt', 2)
     i.interpretation()
     print("Работа анализатора заверешена успешно!")
 except Exception as error:

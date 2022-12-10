@@ -5,14 +5,20 @@ procedure sum(pk, pn: integer, var rez : integer);
 var i: integer;
 begin
 write(pk);
-write(pk + pn)
+i := pk + pn;
+if i > 3 then
+    i := 5
+else
+    i := 7;
+write(i + 3)
 end;
 
 procedure num(m1, m2: integer, var res : integer);
 var q: integer;
 begin
 write(m1);
-write(m1 + m2)
+q := m1 + m2;
+write(q)
 end;
 
 begin

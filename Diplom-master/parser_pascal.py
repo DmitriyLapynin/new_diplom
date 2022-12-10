@@ -156,7 +156,7 @@ class Parser():
             self.writePascal_proc(f)
             print(self.poliz_proc)
         elif (self.buf in self.dict_func) and (self.dict_func[self.buf][0] == "ID"):
-            self.checkID()
+            self.checkID_proc()
             # self.poliz.append(("poliz_address", self.buf))
             self.poliz_proc.append(("poliz_address", self.buf))
             if self.dict_func[self.buf][2] == "array":
@@ -718,11 +718,16 @@ class Parser():
         self.gl(f, self.dict)
         if self.buf == '(':
             self.gl(f, self.dict)
+            self.poliz.append(("begin_args", 0))
+            self.poliz.append(("name_proc", name_proc))
             self.E(f)
+            self.poliz.append(("assign_args", 0))
             while self.buf == ',':
                 self.gl(f, self.dict)
                 self.E(f)
+                self.poliz.append(("assign_args", 0))
             if self.buf == ')':
+                self.poliz.append(("end_args", 0))
                 self.gl(f, self.dict)
             else:
                 raise Exception("expect \")\"")
@@ -1069,3 +1074,4 @@ class Parser():
         print(p.dict, "qqq")
         print(p.dict_func, "aaa")
         print(p.poliz)
+        print(p.param_proc)
