@@ -6,23 +6,20 @@ var i: integer;
 begin
 write(pk);
 i := pk + pn;
-if i > 3 then
-    i := 5
-else
-    i := 7;
 write(i + 3)
 end;
 
-procedure num(m1, m2: integer, var res : integer);
+function num(m1, m2: integer, var res : integer) : integer;
 var q: integer;
 begin
 write(m1);
 q := m1 + m2;
-write(q)
+num := q;
+write(num);
 end;
 
 begin
 n := 3;
 sum(3 + 4 * 2, 5, n);
-write(n + 5)
+num(4, 5, n)
 end.

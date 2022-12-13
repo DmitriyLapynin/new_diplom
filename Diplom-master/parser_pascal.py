@@ -95,6 +95,14 @@ class Parser():
                     pass
                 self.key_proc = True
                 self.begin_proc(f)
+            elif self.buf == 'function':
+                self.function(f)
+                if self.buf == "var":
+                    self.var_pr(f)
+                else:
+                    pass
+                self.key_proc = True
+                self.begin_proc(f)
             else:
                 raise Exception("expect procedure or begin")
             self.key_proc = False
@@ -346,6 +354,35 @@ class Parser():
         if self.st_lex[-1] != "bool":
             raise Exception("expression is not boolean")
         self.st_lex.pop()
+
+    def function(self, f):
+        list_proc = []
+        arg = []
+        self.gl_proc(f, self.dict_func)
+        self.curr_name_func = self.buf
+        list_proc.append(self.buf)
+        self.gl_proc(f, self.dict_func)
+        if self.buf == '(':
+            self.gl_proc(f, self.dict_func)
+            self.args_pr(f, arg)
+            list_proc[-1] = ((list_proc[-1], arg))
+            self.param_proc[list_proc[0][0]] = list_proc[0][1]
+            # self.param_proc.append(list_proc[0])
+            list_proc = []
+            if self.buf == ')':
+                self.gl_proc(f, self.dict_func)
+                if self.buf == ':':
+                    self.gl_proc(f, self.dict_func)
+                    self.gl_proc(f, self.dict_func)
+                    if self.buf == ';':
+                        self.gl_proc(f, self.dict_func)
+                        self.dict_func[self.curr_name_func] = ("ID", False, "integer")
+                        self.param_proc[self.curr_name_func].append((self.curr_name_func, "ID", False, "integer"))
+                        return
+                    else:
+                        raise Exception("Error: expect \";\" ")
+                else:
+                    raise Exception("Error: expect \":\" ")
 
     def procedure(self, f):
         list_proc = []
