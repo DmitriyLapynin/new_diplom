@@ -1,6 +1,7 @@
 
 class Executer():
     name = ""
+    value_func = 0
 
     def __init__(self, pars):
         self.pars = pars
@@ -157,6 +158,9 @@ class Executer():
                             break
                     self.pars.dict[i] = ("ID", True, (self.pars.dict[i])[2], int(value))
             elif pc_el[0] == "+":
+                if self.value_func != 0:
+                    args.append(self.value_func)
+                    self.value_func = 0
                 i = args[-1]
                 args.pop()
                 j = args[-1]
@@ -188,6 +192,9 @@ class Executer():
                 else:
                     args.append(j + i)
             elif pc_el[0] == "*":
+                if self.value_func != 0:
+                    args.append(self.value_func)
+                    self.value_func = 0
                 i = args[-1]
                 args.pop()
                 j = args[-1]
@@ -219,6 +226,9 @@ class Executer():
                 else:
                     args.append(j * i)
             elif pc_el[0] == "-":
+                if self.value_func != 0:
+                    args.append(self.value_func)
+                    self.value_func = 0
                 i = args[-1]
                 args.pop()
                 j = args[-1]
@@ -420,6 +430,9 @@ class Executer():
                 args.pop()
                 args.append(j != i)
             elif pc_el[0] == "assign":
+                '''if len(args) < 2 and self.value_func != 0:
+                    args.append(self.value_func)
+                    self.value_func = 0'''
                 i = args[-1]
                 args.pop()
                 j = args[-1]
@@ -463,6 +476,9 @@ class Executer():
                 while pc_el[0] != "end_args":
                     index += 1
                     pc_el = self.pars.poliz[index]
+                if self.value_func != 0:
+                    args.append(self.value_func)
+                    self.value_func = 0
             else:
                 raise Exception("POLIZ: unexpected elem")
             index += 1
@@ -493,7 +509,6 @@ class Executer():
                 elif (len(elem) > 4) and (type(elem[-1]) == int):
                     args.append(elem[4])
                 else:
-                    print(elem)
                     raise Exception("POLIZ: indefinite identifier")
             elif pc_el[0] == "not":
                 i = args[-1]
@@ -872,7 +887,12 @@ class Executer():
                     self.pars.param_proc[self.name][ind] = tuple(tmp)
                 else:
                     self.pars.param_proc[self.name][ind] += (i, )
-                print(self.pars.param_proc[self.name][ind])
+                    if self.pars.param_proc[self.name][ind][0] == self.name:
+                        self.value_func = i
+                '''for u in self.pars.param_proc:
+                    if u == self.name:
+                        
+                        self.value_func = i'''
             elif pc_el[0] == "beg_ind_arr":
                 key = True
             elif pc_el[0] == "end_ind_arr":

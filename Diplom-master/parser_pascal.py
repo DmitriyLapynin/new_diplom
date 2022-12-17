@@ -109,7 +109,6 @@ class Parser():
             self.gl(f, self.dict)
             self.all_poliz_proc[self.curr_name_func] = self.poliz_proc
             self.poliz_proc = []
-        print(self.all_poliz_proc, "asd")
         self.begin(f)
         if self.buf != ".":
             raise Exception("expect .")
@@ -259,7 +258,6 @@ class Parser():
                         self.poliz_proc.append(("end_ind_arr", 0))
                         self.st_lex.pop()
                         self.st_lex.append("int")
-                        print(self.st_lex, self.buf)
                     else:
                         raise Exception("Error: expect \"]\" ")
                 else:
@@ -354,6 +352,7 @@ class Parser():
         if self.st_lex[-1] != "bool":
             raise Exception("expression is not boolean")
         self.st_lex.pop()
+
 
     def function(self, f):
         list_proc = []
@@ -913,7 +912,7 @@ class Parser():
             self.checkOp()
 
     def F(self, f):
-        if (self.buf in self.dict) and (self.dict[self.buf][0] == "ID"):
+        if (self.buf in self.dict) and (self.dict[self.buf][0] == "ID") and (self.buf not in self.all_poliz_proc):
             self.checkID()
             self.poliz.append(("ID", self.buf))
             if self.dict[self.buf][2] == "array":
@@ -939,7 +938,6 @@ class Parser():
                         self.poliz.append(("end_ind_arr", 0))
                         self.st_lex.pop()
                         self.st_lex.append("int")
-                        print(self.st_lex, self.buf)
                     else:
                         raise Exception("Error: expect \"]\" ")
                 else:
@@ -956,6 +954,8 @@ class Parser():
             self.st_lex.append("bool")
             self.poliz.append(("bool", 1))
             self.gl(f, self.dict)
+        elif self.buf in self.all_poliz_proc:
+            self.add_poliz_proc(f, self.buf)
         elif self.buf == "false":
             self.st_lex.append("bool")
             self.poliz.append(("bool", 0))
@@ -1108,7 +1108,7 @@ class Parser():
         p.program(f)
         p.gl(f, self.dict)
         p.block(f)
-        print(p.dict, "qqq")
+        '''print(p.dict, "qqq")
         print(p.dict_func, "aaa")
         print(p.poliz)
-        print(p.param_proc)
+        print(p.param_proc)'''

@@ -1,7 +1,7 @@
 program a34553;
 var n, p, k : integer;
 
-procedure sum(pk, pn: integer, var rez : integer);
+procedure sum(pk, pn: integer, rez : integer);
 var i: integer;
 begin
 write(pk);
@@ -9,17 +9,18 @@ i := pk + pn;
 write(i + 3)
 end;
 
-function num(m1, m2: integer, var res : integer) : integer;
+function num(m1, m2: integer, res : integer) : integer;
 var q: integer;
 begin
 write(m1);
 q := m1 + m2;
 num := q;
-write(num);
+write(num)
 end;
 
 begin
 n := 3;
 sum(3 + 4 * 2, 5, n);
-num(4, 5, n)
+p := num(4, 7, n) * 5;
+write(p)
 end.
