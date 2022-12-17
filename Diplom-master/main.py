@@ -16,9 +16,9 @@ try:
             print("Номер языка должен быть в отрезке [1, 6]")
         else:
             break
-    print("Введите название файла с программой")
-    f = input()
-    i = Interpretator('test2.txt', mode)
+    '''print("Введите название файла с программой")
+    f = input()'''
+    i = Interpretator('test3.txt', mode)
     i.interpretation()
     print("Работа анализатора заверешена успешно!")
 except Exception as error:

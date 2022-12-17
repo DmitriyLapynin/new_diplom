@@ -1,0 +1,15 @@
+program a34553;
+var a, b, t:integer;
+c, d : bool;
+e, r : bool;
+b : array[1..5] of integer;
+begin
+    a := 2;
+    for i := 1 to 5 do
+    begin
+        b[a - 1] := a;
+        write(b[a - 1]);
+        a := a + 1;
+    end;
+    write(a)
+end.

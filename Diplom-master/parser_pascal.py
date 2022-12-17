@@ -87,6 +87,10 @@ class Parser():
         print(self.buf)
         self.begin(f)'''
         while self.buf != "begin":
+            if self.mode == 6:
+                pass
+            else:
+                raise Exception("unexpected:", self.buf)
             if self.buf == 'procedure':
                 self.procedure(f)
                 if self.buf == "var":
@@ -161,7 +165,7 @@ class Parser():
             self.readPascal(f)'''
         if self.buf == "write":
             self.writePascal_proc(f)
-            print(self.poliz_proc)
+            # print(self.poliz_proc)
         elif (self.buf in self.dict_func) and (self.dict_func[self.buf][0] == "ID"):
             self.checkID_proc()
             # self.poliz.append(("poliz_address", self.buf))
@@ -620,6 +624,10 @@ class Parser():
                 else:
                     raise Exception("Error: expect type of variables ")
                 if self.buf == "array":
+                    if self.mode == 4 or self.mode == 5:
+                        pass
+                    else:
+                        raise Exception("unexpected:", self.buf)
                     self.gl(f, self.dict)
                     if self.buf == '[':
                         self.gl(f, self.dict)
@@ -696,17 +704,17 @@ class Parser():
             else:
                 self.condPascal(f)
         elif self.buf == "while":
-            if self.mode == 1 or self.mode == 2:
+            if self.mode == 1 or self.mode == 2 or self.mode == 4 or self.mode == 6:
                 raise Exception("unexpected:", self.buf)
             else:
                 self.whilePascal(f)
         elif self.buf == "repeat":
-            if self.mode == 1 or self.mode == 2:
+            if self.mode == 1 or self.mode == 2 or self.mode == 4 or self.mode == 6:
                 raise Exception("unexpected:", self.buf)
             else:
                 self.repeatPascal(f)
         elif self.buf == "for":
-            if self.mode == 1 or self.mode == 2:
+            if self.mode == 1 or self.mode == 2 or self.mode == 4 or self.mode == 6:
                 raise Exception("unexpected:", self.buf)
             else:
                 self.forPascal(f)
@@ -786,7 +794,7 @@ class Parser():
         if self.buf == "to":
             self.gl(f, self.dict)
             self.poliz.append(("int", self.buf))
-            self.poliz.append(("<", 0))
+            self.poliz.append(("<=", 0))
             pl1 = len(self.poliz)
             self.poliz.append(("null", 0))
             self.poliz.append(("poliz_fgo", 0))
