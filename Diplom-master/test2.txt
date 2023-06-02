@@ -1,14 +1,12 @@
-program a34553;
-var a, b, t:integer;
-c, d : bool;
-e, r : bool;
-b : array[1..5] of integer;
+program test;
+var a: integer;
+b: array[1..5] of integer;
 begin
     a := 2;
     repeat
     begin
         b[a - 1] := a;
-        write(b[a - 1]);
+        writeln(b[a - 1]);
         a := a + 1;
     end;
     until a > 4;

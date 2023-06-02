@@ -1,26 +1,33 @@
 program a34553;
-var n, p, k : integer;
+var n, p, ind: integer;
 
 procedure sum(pk, pn: integer);
-var i: integer;
+var i, k: integer;
 begin
 write(pk);
+for k := 1 to 5 do
+begin
+    pk := pk + k;
+    write(pk + k);
+end;
 i := pk + pn;
-write(i + 3)
+write(i)
 end;
 
 function num(m1, m2: integer) : integer;
-var q: integer;
+var q, k: integer;
 begin
 write(m1);
-q := m1 + m2;
+for k := 1 to 5 do
+    q := m1 + k;
 num := q + 1;
 write(num)
 end;
 
 begin
 n := 3;
-sum(3 + 4 * 2, 5);
+for ind := 1 to 3 do
+    sum(3 + 4 * 2, 5);
 p := num(4, 7);
 write(p)
 end.

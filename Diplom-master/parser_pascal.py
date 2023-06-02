@@ -87,7 +87,7 @@ class Parser():
         print(self.buf)
         self.begin(f)'''
         while self.buf != "begin":
-            if self.mode == 6:
+            if self.mode >= 6:
                 pass
             else:
                 raise Exception("unexpected:", self.buf)
@@ -141,29 +141,30 @@ class Parser():
 
     def operators_proc(self, f):
         id_arr = ""
-        '''if self.buf == "if":
-            if self.mode == 1 or self.mode == 3:
+        if self.buf == "if":
+            if self.mode == 1:
                 raise Exception("unexpected:", self.buf)
             else:
-                self.condPascal(f)
+                self.condPascal_proc(f)
         elif self.buf == "while":
-            if self.mode == 1 or self.mode == 2:
+            if self.mode == 1 or self.mode == 2 or self.mode == 4 or self.mode == 6 or self.mode == 7:
                 raise Exception("unexpected:", self.buf)
             else:
-                self.whilePascal(f)
+                self.whilePascal_proc(f)
         elif self.buf == "repeat":
-            if self.mode == 1 or self.mode == 2:
+            if self.mode == 1 or self.mode == 2 or self.mode == 4 or self.mode == 6 or self.mode == 7:
                 raise Exception("unexpected:", self.buf)
             else:
-                self.repeatPascal(f)
+                self.repeatPascal_proc(f)
         elif self.buf == "for":
-            if self.mode == 1 or self.mode == 2:
+            if self.mode == 1 or self.mode == 2 or self.mode == 4 or self.mode == 6 or self.mode == 7:
                 raise Exception("unexpected:", self.buf)
             else:
-                self.forPascal(f)
+                self.forPascal_proc(f)
+                print(self.poliz_proc)
         elif self.buf == "read":
-            self.readPascal(f)'''
-        if self.buf == "write":
+            self.readPascal(f)
+        elif self.buf == "write":
             self.writePascal_proc(f)
             # print(self.poliz_proc)
         elif (self.buf in self.dict_func) and (self.dict_func[self.buf][0] == "ID"):
@@ -186,6 +187,107 @@ class Parser():
             return self.assignPascal_proc(f)
         else:
             self.begin_proc(f)
+
+    def forPascal_proc(self, f):
+        self.gl_proc(f, self.dict_func)
+        if (self.buf in self.dict_func) and (self.dict_func[self.buf][0] == "ID"):
+            self.dict_func[self.buf] = ("ID", False, "integer")
+            tmp = self.buf
+            self.checkID_proc()
+            self.poliz_proc.append(("poliz_address", self.buf))
+            self.assignPascal_proc(f)
+            pl0 = len(self.poliz_proc)
+            self.poliz_proc.append(("ID", tmp))
+        else:
+            raise Exception("expect ident")
+        if self.buf == "to":
+            self.gl_proc(f, self.dict_func)
+            self.poliz_proc.append(("int", self.buf))
+            self.poliz_proc.append(("<=", 0))
+            pl1 = len(self.poliz_proc)
+            self.poliz_proc.append(("null", 0))
+            self.poliz_proc.append(("poliz_fgo", 0))
+            self.gl_proc(f, self.dict_func)
+            if self.buf == "do":
+                self.gl_proc(f, self.dict_func)
+                self.operators_proc(f)
+                self.poliz_proc.append(("poliz_address", tmp))
+                self.poliz_proc.append(("ID", tmp))
+                self.poliz_proc.append(("int", 1))
+                self.poliz_proc.append(("+", 0))
+                self.poliz_proc.append(("assign", 0))
+                self.poliz_proc.append(("poliz_label", pl0))
+                self.poliz_proc.append(("poliz_go", 0))
+                self.poliz_proc[pl1] = ("poliz_label", len(self.poliz_proc))
+            else:
+                raise Exception("expect do")
+        else:
+            raise Exception("expect to")
+
+
+
+    def repeatPascal_proc(self, f):
+        pl0 = len(self.poliz_proc)
+        self.gl_proc(f, self.dict_func)
+        self.operators_proc(f)
+        if self.buf == ";":
+            self.gl_proc(f, self.dict_func)
+        if self.buf == "until":
+            self.gl_proc(f, self.dict_func)
+            self.E_proc(f)
+            self.checkNot_proc()
+            self.eqBool_proc()
+            pl1 = len(self.poliz_proc)
+            self.poliz_proc.append(("null", 0))
+            self.poliz_proc.append(("poliz_fgo", 0))
+            self.poliz_proc.append(("poliz_label", pl0))
+            self.poliz_proc.append(("poliz_go", 0))
+            self.poliz_proc[pl1] = (("poliz_label", len(self.poliz_proc)))
+        else:
+            raise Exception("expect until")
+
+
+    def whilePascal_proc(self, f):
+        pl0 = len(self.poliz_proc)
+        self.gl_proc(f, self.dict_func)
+        self.E_proc(f)
+        self.eqBool_proc()
+        pl1 = len(self.poliz_proc)
+        self.poliz_proc.append(("null", 0))
+        self.poliz_proc.append(("poliz_fgo", 0))
+        if self.buf == "do":
+            self.gl_proc(f, self.dict_func)
+            self.operators_proc(f)
+            self.poliz_proc.append(("poliz_label", pl0))
+            self.poliz_proc.append(("poliz_go", 0))
+            self.poliz_proc[pl1] = ("poliz_label", len(self.poliz_proc))
+        else:
+            raise Exception("expect do")
+
+    def condPascal_proc(self, f):
+        self.gl_proc(f, self.dict_func)
+        self.E_proc(f)
+        self.eqBool_proc()
+        pl2 = len(self.poliz_proc)
+        self.poliz_proc.append(("null", 0))
+        self.poliz_proc.append(("poliz_fgo", 0))
+        if self.buf == "then":
+            self.gl_proc(f, self.dict_func)
+            self.operators_proc(f)
+            pl3 = len(self.poliz_proc)
+            self.poliz_proc.append(("null", 0))
+            self.poliz_proc.append(("poliz_go", 0))
+            self.poliz_proc[pl2] = (("poliz_label", len(self.poliz_proc)))
+            if self.buf == "else":
+                self.gl_proc(f, self.dict_func)
+                self.operators_proc(f)
+                self.poliz_proc[pl3] = (("poliz_label", len(self.poliz_proc)))
+            else:
+                raise Exception("expected else")
+        else:
+            raise Exception("expected then")
+
+
 
     def writePascal_proc(self, f):
         self.gl_proc(f, self.dict_func)
@@ -213,7 +315,7 @@ class Parser():
     def E_proc(self, f):
         self.E1_proc(f)
         if (self.buf == "=") or (self.buf == "<=") or (self.buf == ">=") or (self.buf == "<") or (self.buf == ">") or (
-                self.buf == "!="):
+                self.buf == "<>"):
             self.st_lex.append(self.buf)
             self.gl_proc(f, self.dict_func)
             self.E1_proc(f)
@@ -323,6 +425,7 @@ class Parser():
         if (self.buf in self.dict_func) and (self.dict_func[self.buf][0] == "ID") and (len(self.dict_func[self.buf]) > 2):
             pass
         else:
+
             raise Exception(self.buf + " not declared")
 
     def checkOp_proc(self):
@@ -722,6 +825,8 @@ class Parser():
             self.readPascal(f)
         elif self.buf == "write":
             self.writePascal(f)
+        elif self.buf == "writeln":
+            self.writelnPascal(f)
         elif self.buf in self.all_poliz_proc:
             self.add_poliz_proc(f, self.buf)
         elif (self.buf in self.dict) and (self.dict[self.buf][0] == "ID"):
@@ -1096,6 +1201,20 @@ class Parser():
             return
         else:
             raise Exception("expected: )")
+
+    def writelnPascal(self, f):
+        self.gl(f, self.dict)
+        if self.buf == '(':
+            self.gl(f, self.dict)
+            self.E(f)
+            if self.buf == ')':
+                self.gl(f, self.dict)
+                self.poliz.append(("writeln", 0))
+                return
+            else:
+                raise Exception("expected: )")
+        else:
+            raise Exception("expected: (")
 
     def writePascal(self, f):
         self.gl(f, self.dict)

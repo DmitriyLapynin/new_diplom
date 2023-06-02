@@ -2,6 +2,7 @@
 class Executer():
     name = ""
     value_func = 0
+    answer = ""
 
     def __init__(self, pars):
         self.pars = pars
@@ -95,9 +96,33 @@ class Executer():
                             if array[ind_arr - 1] == "no":
                                 raise Exception("POLIZ: indefinite identifier")
                             else:
-                                print(array[ind_arr - 1])
+                                # print(array[ind_arr - 1], end='')
+                                self.answer += str(array[ind_arr - 1])
                 else:
-                    print(j)
+                    # print(j)
+                    self.answer += str(j)
+            elif pc_el[0] == "writeln":
+                j = args[-1]
+                args.pop()
+                if args != []:
+                    ind_arr = j
+                    j = args[-1]
+                    if j in self.pars.dict and self.pars.dict[j][2] == "array":
+                        args.pop()
+                        array = self.pars.dict[j][6]
+                        if ind_arr < (self.pars.dict[j])[4] or ind_arr > (self.pars.dict[j])[5]:
+                            raise Exception("Error: not in range of array")
+                        else:
+                            if array[ind_arr - 1] == "no":
+                                raise Exception("POLIZ: indefinite identifier")
+                            else:
+                                # print(array[ind_arr - 1], end='')
+                                self.answer += str(array[ind_arr - 1])
+                                self.answer += '\n'
+                else:
+                    # print(j)
+                    self.answer += str(j)
+                    self.answer += '\n'
             elif pc_el[0] == "read":
                 value = 0
                 i = args[-1]
@@ -299,6 +324,37 @@ class Executer():
                         args.append(j == i)
                 else:
                     args.append(j == i)
+            elif pc_el[0] == "<>":
+                i = args[-1]
+                args.pop()
+                j = args[-1]
+                args.pop()
+                if key:
+                    args.append(j != i)
+                elif j in self.pars.dict and self.pars.dict[j][2] == "array":
+                    ind_arr = i
+                    # key = False
+                    i = args[-1]
+                    args.pop()
+                    if args != []:
+                        t = args[-1]
+                        if t in self.pars.dict and self.pars.dict[t][2] == "array":
+                            args.pop()
+                            args.append(self.pars.dict[t][6][i - 1] != self.pars.dict[j][6][ind_arr - 1])
+                        else:
+                            args.append(i != self.pars.dict[j][6][ind_arr - 1])
+                    else:
+                        args.append(i != self.pars.dict[j][6][ind_arr - 1])
+                elif args != []:
+                    t = args[-1]
+                    if t in self.pars.dict and self.pars.dict[t][2] == "array":
+                        args.pop()
+                        # key = False
+                        args.append(self.pars.dict[t][6][j - 1] != i)
+                    else:
+                        args.append(j != i)
+                else:
+                    args.append(j != i)
             elif pc_el[0] == "<":
                 i = args[-1]
                 args.pop()
@@ -482,6 +538,7 @@ class Executer():
             else:
                 raise Exception("POLIZ: unexpected elem")
             index += 1
+        print(self.answer)
 
     def execute_proc_poliz(self):
         poliz = self.pars.all_poliz_proc[self.name]
@@ -540,7 +597,14 @@ class Executer():
             elif pc_el[0] == "write":
                 j = args[-1]
                 args.pop()
-                print(j)
+                # print(j)
+                self.answer += str(j)
+            elif pc_el[0] == "writeln":
+                j = args[-1]
+                args.pop()
+                # print(j)
+                self.answer += str(j)
+                self.answer += '\n'
             elif pc_el[0] == "read":
                 value = 0
                 i = args[-1]
@@ -883,7 +947,7 @@ class Executer():
                         break
                 if len(self.pars.param_proc[self.name][ind]) > 5:
                     tmp = list(self.pars.param_proc[self.name][ind])
-                    tmp[len(tmp)] = i
+                    tmp[len(tmp) - 1] = i
                     self.pars.param_proc[self.name][ind] = tuple(tmp)
                 else:
                     self.pars.param_proc[self.name][ind] += (i, )
